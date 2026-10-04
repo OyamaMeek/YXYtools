@@ -17,3 +17,16 @@
 - **Git 提交**：`7ba766e feat: add verified personal campus card balance client`；本条实际哈希补记由后续文档提交保存。
 
 ---
+
+## [2026-10-04 12:28] 创建 Telegram 私有配置模板
+
+- **需求/问题描述**：
+  > 用户要求创建 .env，以填写 Telegram Bot Token 和 Chat ID。
+- **实际实现的功能与改动**：
+  - 在项目根目录创建 .env，保留 TELEGRAM_BOT_TOKEN 和 TELEGRAM_CHAT_ID 空值，权限设为 600。
+  - 验证变量名称、空值、文件权限及 Git 忽略规则；没有发送 Telegram 请求。
+- **涉及文件**：
+  - .env（仅本地，不提交）、memory/progress.md、docs/CHANGELOG.md
+- **Git 提交**：待提交；仅提交不含凭证的记录。
+
+---

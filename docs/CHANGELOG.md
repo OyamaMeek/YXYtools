@@ -77,6 +77,6 @@
   - Claude/Claude.md、docs/2026-10-04_reverse-yxy-report.md、docs/CHANGELOG.md
   - memory/agents.md、memory/progress.md、memory/verify.md、memory/gotchas.md
   - context/2026/10/04/13-28-14/对话.md
-- **Git 提交**：功能 `f673d26`、时间限制 `cd0fea1` 已推送；验收文档待提交。
+- **Git 提交**：功能 `f673d26`、时间限制 `cd0fea1` 已推送；验收文档 `c180283 docs: record deployed monitor and Actions verification` 已本地提交。文档推送被自动审批拒绝，理由为包含个人学校、余额和监测细节，需明确公开披露授权；功能部署不受影响。
 
 ---

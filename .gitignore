@@ -1,0 +1,7 @@
+work/
+yxy_app/2026_*
+.DS_Store
+__pycache__/
+*.pyc
+.env
+private/

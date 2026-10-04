@@ -103,6 +103,6 @@
   - 不提交与本任务无关的 .DS_Store 修改。普通 push 的本地远端引用更新受到沙箱限制，后续 Git 写操作使用宿主审批机制。
 - **涉及文件**：
   - docs/CHANGELOG.md、memory/progress.md、context/2026/10/04/14-11-43/对话.md
-- **Git 提交**：待提交本次推送核对与对话记录。
+- **Git 提交**：`5a2e5d6 docs: record Actions deployment push verification` 已普通推送至 origin/main；git ls-remote 核对远端哈希与本地一致。本条实际哈希由后续文档提交补记。
 
 ---

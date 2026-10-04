@@ -6,14 +6,11 @@
     "observed_at": "2026-10-04T12:58:46.242781+08:00"
   },
   "failure": null,
-  "pending": [
+  "pending": [],
+  "sent": [
     {
       "id": "d42cd9fea8304262ab7c851b1dd0912a",
-      "text": "易校园余额监测连接测试\n真实查询余额：10.17 元\n检测时间：2026-10-04T12:58:46.243233+08:00\n本消息用于验证连接，未模拟余额变化。",
-      "attempts": 0,
-      "retry_at": null,
-      "blocked": null
+      "message_id": 1499
     }
-  ],
-  "sent": []
+  ]
 }

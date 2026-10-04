@@ -134,6 +134,23 @@
 - **涉及文件**：
   - .github/workflows/monitor.yml、.github/workflows/schedule-probe.yml
   - memory/plan.md、memory/verify.md、docs/CHANGELOG.md
+- **Git 提交**：`c15e430 fix: use equivalent UTC monitor schedule and probe automatic triggers` 已普通推送至 origin/main，GitHub API 核对 main 哈希一致；实际哈希由后续文档提交补记。
+
+---
+
+## [2026-10-04 18:03] 记录 UTC 诊断结果并清理临时工作流
+
+- **需求/问题描述**：
+  > 排查 17:30 未触发；用户明确选择继续只使用 GitHub 定时触发。
+- **实际实现的功能与改动**：
+  - 核对 17:48、17:53 临时 UTC 诊断和 18:00 正式监测；截至 18:02:45，均没有 schedule 事件，总运行仍为 3 次手动，远端有效观察仍为 13:26:43。
+  - 通过 API 禁用临时诊断，确认 disabled_manually 后删除工作流；保留每天北京时间 07:30 至 22:30 的 31 个 UTC 时间点。
+  - 更新 README、计划、进度及验收记录。短期没有事件不能排除延迟到达；自动执行未恢复，未认定时区字段为原因，未将手动查询作为恢复证据。
+  - YAML 解析、31 个时点换算及 5 项测试在 c15e430 提交前通过；本次仅清理诊断和更新文档，执行 git diff --check，无业务代码改动，不重复运行业务测试。
+  - 原始排查快照仅保存在忽略的 work/schedule-investigation.json；没有新增调度服务或凭证存放位置。
+- **涉及文件**：
+  - .github/workflows/schedule-probe.yml（删除）、README.md
+  - memory/plan.md、memory/progress.md、memory/verify.md、memory/gotchas.md、docs/CHANGELOG.md
 - **Git 提交**：待提交。
 
 ---

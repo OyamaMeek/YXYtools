@@ -77,6 +77,17 @@
   - Claude/Claude.md、docs/2026-10-04_reverse-yxy-report.md、docs/CHANGELOG.md
   - memory/agents.md、memory/progress.md、memory/verify.md、memory/gotchas.md
   - context/2026/10/04/13-28-14/对话.md
-- **Git 提交**：功能 `f673d26`、时间限制 `cd0fea1` 已推送；验收文档 `c180283 docs: record deployed monitor and Actions verification` 已本地提交。文档推送被自动审批拒绝，理由为包含个人学校、余额和监测细节，需明确公开披露授权；功能部署不受影响。
+- **Git 提交**：功能 `f673d26`、时间限制 `cd0fea1` 已推送。用户明确授权公开推送后，验收文档 `c180283 docs: record deployed monitor and Actions verification` 和补记 `4509bc8 docs: record delivery commit and publication approval block` 均已推送；远端 main 实际哈希与本地 4509bc8 一致。
+
+## [2026-10-04 13:33] 授权推送交付记录
+
+- **需求/问题描述**：
+  > 用户明确授权推送包含学校名称、余额和监测说明的交付记录。
+- **实际实现的功能与改动**：
+  - 普通推送 origin/main 成功，通过 git ls-remote 核对远端提交为 4509bc8，与本地一致。
+  - 保存本次可见授权及推送进度消息。没有修改功能代码，没有重复运行业务测试。
+- **涉及文件**：
+  - docs/CHANGELOG.md、memory/progress.md、context/2026/10/04/13-33-39/对话.md
+- **Git 提交**：交付记录 c180283、4509bc8 已推送；本条补记随文档提交保存。
 
 ---

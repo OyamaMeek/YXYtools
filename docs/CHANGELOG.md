@@ -60,6 +60,23 @@
   - 5 项检查、真实本人余额查询及 Python 编译通过；仍返回 10.17 元。
 - **涉及文件**：
   - client.py、monitor.py、tests/test_monitor.py、tools/check_telegram.py
-- **Git 提交**：待提交。
+- **Git 提交**：`cd0fea1 fix: enforce Beijing time window at request boundaries`；实际哈希补记由后续文档提交保存。
+
+---
+
+## [2026-10-04 13:28] 最终 Actions 验收与交付记录
+
+- **需求/问题描述**：
+  > 删除通知中的“真实查询”，下一行显示变动；余额未改变时不推送，完成已授权的定时监测。
+- **实际实现的功能与改动**：
+  - 最终代码 cd0fea1 的 GitHub 任务 [37179863052](https://github.com/OyamaMeek/YXYtools/actions/runs/37179863052) 成功，查询、远端状态恢复及只读 Telegram 网络检查通过。
+  - 与前次远端状态比较：观察时间推进，余额仍为 10.17 元，pending 为空、sent 未增加，没有新增推送。
+  - 最终本地 5 项检查及 Python 编译通过；更新执行记录、逆向报告和持久记录，保存可见对话。
+  - 真实变化后的现场接收、整夜运行、会话有效期及自动续期未验证，交付文档明确这些范围。
+- **涉及文件**：
+  - Claude/Claude.md、docs/2026-10-04_reverse-yxy-report.md、docs/CHANGELOG.md
+  - memory/agents.md、memory/progress.md、memory/verify.md、memory/gotchas.md
+  - context/2026/10/04/13-28-14/对话.md
+- **Git 提交**：功能 `f673d26`、时间限制 `cd0fea1` 已推送；验收文档待提交。
 
 ---

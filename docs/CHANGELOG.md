@@ -151,6 +151,6 @@
 - **涉及文件**：
   - .github/workflows/schedule-probe.yml（删除）、README.md
   - memory/plan.md、memory/progress.md、memory/verify.md、memory/gotchas.md、docs/CHANGELOG.md
-- **Git 提交**：待提交。
+- **Git 提交**：`5ef3250 docs: record UTC scheduling evidence and remove temporary probe` 已普通推送至 origin/main，git ls-remote 核对远端与本地一致；实际哈希由后续文档提交补记。18:04:27 的 API 复核仅剩正式工作流 active，定时事件仍为 0，状态观察未推进。
 
 ---

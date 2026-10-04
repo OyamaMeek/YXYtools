@@ -106,3 +106,18 @@
 - **Git 提交**：`5a2e5d6 docs: record Actions deployment push verification` 已普通推送至 origin/main；git ls-remote 核对远端哈希与本地一致。本条实际哈希由后续文档提交补记。
 
 ---
+
+## [2026-10-04 17:07] 排查定时运行缺失并重新启用工作流
+
+- **需求/问题描述**：
+  > 用户报告校园卡监测没有自动执行，Actions 页面仅有手动运行。
+- **实际实现的功能与改动**：
+  - GitHub API 确认 3 次运行均为 workflow_dispatch，schedule 运行数量为 0；仓库未停用或归档，默认分支 main，Actions enabled=true，工作流 active。
+  - 核对远端 YAML 与当前 GitHub 官方文档，Asia/Shanghai 时区及 cron 配置有效；GitHub 状态 API 没有未解决事故。尚无法确定 GitHub 内部未触发的具体原因。
+  - 通过 GitHub API 禁用再启用工作流，实际状态依次为 disabled_manually、active。重新启用后 schedule 仍为 0，自动执行恢复未确认；下一计划时间为北京时间 17:30。
+  - 没有修改业务代码、定时配置、Secrets 或 state；没有额外发送消息或手动触发。仅更新验证范围与持久记录，没有重复运行业务测试。
+- **涉及文件**：
+  - memory/progress.md、memory/verify.md、memory/gotchas.md、docs/CHANGELOG.md
+- **Git 提交**：待提交。
+
+---

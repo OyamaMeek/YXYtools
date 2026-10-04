@@ -121,3 +121,19 @@
 - **Git 提交**：`7e58493 docs: record scheduled workflow investigation and reactivation` 已普通推送至 origin/main，git ls-remote 核对远端与本地一致；实际哈希由后续文档提交补记。
 
 ---
+
+## [2026-10-04 17:43] 使用等价 UTC 定时计划并诊断自动触发
+
+- **需求/问题描述**：
+  > 用户报告重新启用工作流后 17:30 仍未自动执行。
+- **实际实现的功能与改动**：
+  - GitHub API 确认只有 3 次手动运行，没有新定时事件。
+  - monitor.yml 使用等价 UTC cron，逐项核对北京时间 07:30 至 22:30 的 31 个时间点；保留每次请求前的北京时间窗口校验。
+  - 暂时部署无权限、无凭证、无业务请求的定时诊断工作流，计划在北京时间 17:48 和 17:53 输出事件和时间，完成诊断后删除。
+  - 两份工作流 YAML 解析、UTC 日期与时点换算、现有 5 项测试及 git diff --check 通过。自动执行恢复仍待 GitHub schedule 事件验证，尚未认定时区字段为原因。
+- **涉及文件**：
+  - .github/workflows/monitor.yml、.github/workflows/schedule-probe.yml
+  - memory/plan.md、memory/verify.md、docs/CHANGELOG.md
+- **Git 提交**：待提交。
+
+---

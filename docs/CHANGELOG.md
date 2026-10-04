@@ -118,6 +118,6 @@
   - 没有修改业务代码、定时配置、Secrets 或 state；没有额外发送消息或手动触发。仅更新验证范围与持久记录，没有重复运行业务测试。
 - **涉及文件**：
   - memory/progress.md、memory/verify.md、memory/gotchas.md、docs/CHANGELOG.md
-- **Git 提交**：待提交。
+- **Git 提交**：`7e58493 docs: record scheduled workflow investigation and reactivation` 已普通推送至 origin/main，git ls-remote 核对远端与本地一致；实际哈希由后续文档提交补记。
 
 ---

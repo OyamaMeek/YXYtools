@@ -7,7 +7,7 @@ name: Campus card balance monitor
   workflow_dispatch:
     inputs:
       retry_blocked:
-        description: 权限修复后重试被阻塞的 Telegram 消息
+        description: 权限修复后重试被阻塞的 Telegram 消息 
         type: boolean
         default: false
 

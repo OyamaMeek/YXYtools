@@ -30,3 +30,22 @@
 - **Git 提交**：`82af475 docs: record local Telegram environment setup`；实际哈希补记由后续文档提交保存。
 
 ---
+
+## [2026-10-04 13:07] 余额变化通知与 Actions 单次监测
+
+- **需求/问题描述**：
+  > 用户填好 Telegram 配置并确认实际收到连接测试；要求余额下一行显示变动，未变化不推送，继续完成已确认的定时监测。
+- **实际实现的功能与改动**：
+  - 实现首次基准、净余额变化、连续故障去重、有界发送重试及北京时间窗口限制。
+  - 新观察和待发消息先原子保存并推送到 state 分支，发送成功后保存 message_id；失败不丢弃待发消息。
+  - 真实本地查询、Telegram 推送、用户接收及下一次状态恢复通过；未变化没有生成新消息。
+  - 5 项单元检查及 Python 编译通过；状态检查使用实际 JSON 文件、隔离 Git 远端和真实失败推送，验证无效 Actions 配置不会覆盖或删除已有私有文件。
+  - 登录 JSON、Bot Token、Chat ID 已加密保存为 Actions Secrets；运行无新增依赖。用于本地加密上传的 PyNaCl 只安装在被忽略的 work/，不进入产品或提交。
+  - 配置每天北京时间 07:30 至 22:30 共 31 个半小时时间点；全部入口共用 concurrency、不取消正在执行任务，夜间不查询或发送。
+  - GitHub 托管运行器的两次运行尚待执行；真实消费产生的余额变化尚未发生，自动续期未验证。
+- **涉及文件**：
+  - monitor.py、tests/test_monitor.py、tools/run_monitor.py、tools/check_telegram.py
+  - .github/workflows/monitor.yml、README.md、memory/plan.md、memory/progress.md、memory/verify.md
+- **Git 提交**：待提交。
+
+---

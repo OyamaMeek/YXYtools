@@ -1,0 +1,83 @@
+name: Campus card balance monitor
+
+"on":
+  schedule:
+    - cron: '30 7 * * *'
+      timezone: Asia/Shanghai
+    - cron: '0,30 8-22 * * *'
+      timezone: Asia/Shanghai
+  workflow_dispatch:
+    inputs:
+      retry_blocked:
+        description: 权限修复后重试被阻塞的 Telegram 消息
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: yxy-campus-card-monitor
+  cancel-in-progress: false
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check Beijing time window
+        id: window
+        run: python3 -c 'from datetime import datetime,timezone,timedelta; t=datetime.now(timezone(timedelta(hours=8))); print("allowed="+str(450<=t.hour*60+t.minute<1380).lower())' >> "$GITHUB_OUTPUT"
+
+      - name: Checkout monitor source
+        if: steps.window.outputs.allowed == 'true'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          path: app
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /client.py
+            /monitor.py
+            /tools/run_monitor.py
+            /tools/check_telegram.py
+            /tests/test_monitor.py
+
+      - name: Set up Python
+        if: steps.window.outputs.allowed == 'true'
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.12'
+
+      - name: Check monitor behavior
+        if: steps.window.outputs.allowed == 'true'
+        working-directory: app
+        run: |
+          mkdir -p work
+          python3 -m unittest discover -s tests -v
+
+      - name: Restore durable state
+        if: steps.window.outputs.allowed == 'true'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: state
+          path: monitor-state
+
+      - name: Query and notify balance changes
+        if: steps.window.outputs.allowed == 'true'
+        working-directory: app
+        env:
+          YXY_LOGIN_CONFIG: ${{ secrets.YXY_LOGIN_CONFIG }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          MONITOR_STATE_DIR: ${{ github.workspace }}/monitor-state
+          RETRY_BLOCKED: ${{ inputs.retry_blocked && 'true' || 'false' }}
+        run: python3 tools/run_monitor.py
+
+      - name: Check Telegram connectivity without sending
+        if: steps.window.outputs.allowed == 'true' && github.event_name == 'workflow_dispatch'
+        working-directory: app
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python3 tools/check_telegram.py

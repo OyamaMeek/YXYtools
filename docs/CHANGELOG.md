@@ -26,7 +26,7 @@
   - 在项目根目录创建 .env，保留 TELEGRAM_BOT_TOKEN 和 TELEGRAM_CHAT_ID 空值，权限设为 600。
   - 验证变量名称、空值、文件权限及 Git 忽略规则；没有发送 Telegram 请求。
 - **涉及文件**：
-  - .env（仅本地，不提交）、memory/progress.md、docs/CHANGELOG.md
-- **Git 提交**：待提交；仅提交不含凭证的记录。
+  - .env（仅本地，不提交）、memory/progress.md、docs/CHANGELOG.md、context/2026/10/04/12-28-10/对话.md
+- **Git 提交**：`82af475 docs: record local Telegram environment setup`；实际哈希补记由后续文档提交保存。
 
 ---

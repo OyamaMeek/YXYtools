@@ -9,24 +9,11 @@ import subprocess
 import tempfile
 import time
 import uuid
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
 
-from client import load_config, query_balance
-
-BEIJING = timezone(timedelta(hours=8))
-
-
-def now():
-    return datetime.now(BEIJING)
-
-
-def in_window(moment):
-    if moment.tzinfo is None or moment.utcoffset() is None:
-        raise ValueError('运行时间必须包含时区')
-    local = moment.astimezone(BEIJING)
-    return 450 <= local.hour * 60 + local.minute < 1380
+from client import OutsideWindowError, in_window, load_config, now, query_balance
 
 
 def telegram_config(env_file=None):
@@ -195,10 +182,12 @@ class TelegramError(RuntimeError):
 
 def send_message(token, chat, text):
     if not in_window(now()):
-        raise RuntimeError('当前时间不允许发送')
+        raise OutsideWindowError('当前时间不允许发送')
     connection = http.client.HTTPSConnection('api.telegram.org', timeout=20)
     try:
         payload = json.dumps({'chat_id':chat, 'text':text}, ensure_ascii=False).encode()
+        if not in_window(now()):
+            raise OutsideWindowError('当前时间不允许发送')
         connection.request('POST','/bot'+token+'/sendMessage',payload,{'Content-Type':'application/json'})
         response = connection.getresponse()
         body = response.read(1_048_577)
@@ -235,6 +224,8 @@ def drain_pending(repo, state, token, chat, retry_blocked=False):
             return
         try:
             message_id = send_message(token, chat, item['text'])
+        except OutsideWindowError:
+            return
         except (TelegramError, OSError, http.client.HTTPException) as error:
             item['attempts'] += 1
             permanent = isinstance(error, TelegramError) and error.code in (400,401,403,404)
@@ -265,6 +256,8 @@ def run(config_path, repo, env_file=None, retry_blocked=False):
     failed = False
     try:
         amount = query_balance(config)
+    except OutsideWindowError:
+        return 0
     except (ValueError, OSError, http.client.HTTPException):
         record_failure(state, 'query', now())
         print('余额查询失败；有效基准保留')

@@ -14,6 +14,8 @@ def main():
     token, _ = telegram_config()
     connection = http.client.HTTPSConnection('api.telegram.org', timeout=20)
     try:
+        if not in_window(now()):
+            return
         connection.request('POST','/bot'+token+'/getMe')
         response = connection.getresponse()
         body = response.read(1_048_577)

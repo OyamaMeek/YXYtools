@@ -10,6 +10,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import monitor
+import client
 
 ROOT = Path(__file__).resolve().parent.parent
 ZONE = timezone(timedelta(hours=8))
@@ -33,6 +34,7 @@ class MonitorTests(unittest.TestCase):
     def test_time_window_excludes_night_and_rejects_naive_time(self):
         for hour, minute, expected in [(7,29,False),(7,30,True),(22,59,True),(23,0,False)]:
             self.assertEqual(monitor.in_window(datetime(2026,10,4,hour,minute,tzinfo=ZONE)), expected)
+            self.assertEqual(client.in_window(datetime(2026,10,4,hour,minute,tzinfo=ZONE)), expected)
         with self.assertRaises(ValueError):
             monitor.in_window(datetime(2026,10,4,12))
 

@@ -8,8 +8,26 @@ import json
 import re
 import time
 from decimal import Decimal, InvalidOperation
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from urllib.parse import urlencode
+
+BEIJING = timezone(timedelta(hours=8))
+
+
+class OutsideWindowError(RuntimeError):
+    pass
+
+
+def now():
+    return datetime.now(BEIJING)
+
+
+def in_window(moment):
+    if moment.tzinfo is None or moment.utcoffset() is None:
+        raise ValueError('运行时间必须包含时区')
+    local = moment.astimezone(BEIJING)
+    return 450 <= local.hour * 60 + local.minute < 1380
 
 
 def load_config(path):
@@ -75,6 +93,8 @@ def query_balance(config):
     headers = {'Content-Type':'application/x-www-form-urlencoded; charset=utf-8', 'Accept-Encoding':'identity', 'sign':sign_form(form, config['session_secret'])}
     connection = http.client.HTTPSConnection('compus.xiaofubao.com', timeout=20)
     try:
+        if not in_window(now()):
+            raise OutsideWindowError('当前时间不允许查询')
         connection.request('POST', '/routeauth/auth/route/auth/user/getMultiCardMoney', urlencode(form), headers)
         response = connection.getresponse()
         payload = response.read(1_048_577)
@@ -98,4 +118,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='查询本人指定校园卡余额')
     parser.add_argument('--config', required=True, type=Path)
     args = parser.parse_args()
-    print(format(query_balance(load_config(args.config)), '.2f'))
+    if in_window(now()):
+        print(format(query_balance(load_config(args.config)), '.2f'))
+    else:
+        print('北京时间夜间，已跳过查询')

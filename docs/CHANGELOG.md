@@ -42,10 +42,24 @@
   - 5 项单元检查及 Python 编译通过；状态检查使用实际 JSON 文件、隔离 Git 远端和真实失败推送，验证无效 Actions 配置不会覆盖或删除已有私有文件。
   - 登录 JSON、Bot Token、Chat ID 已加密保存为 Actions Secrets；运行无新增依赖。用于本地加密上传的 PyNaCl 只安装在被忽略的 work/，不进入产品或提交。
   - 配置每天北京时间 07:30 至 22:30 共 31 个半小时时间点；全部入口共用 concurrency、不取消正在执行任务，夜间不查询或发送。
-  - GitHub 托管运行器的两次运行尚待执行；真实消费产生的余额变化尚未发生，自动续期未验证。
+  - GitHub 托管运行器两次实际运行通过，任务 37179080148、37179174868；后次观察时间推进，余额相同，没有新增待发或确认消息。真实消费产生的变化尚未发生，自动续期未验证。
 - **涉及文件**：
   - monitor.py、tests/test_monitor.py、tools/run_monitor.py、tools/check_telegram.py
   - .github/workflows/monitor.yml、README.md、memory/plan.md、memory/progress.md、memory/verify.md
+- **Git 提交**：`f673d26 feat: monitor campus card balance changes with durable Telegram delivery`；本条实际哈希补记由后续提交保存。
+
+---
+
+## [2026-10-04 13:14] 全部业务请求入口检查北京时间
+
+- **需求/问题描述**：
+  > 按已确认规划，夜间不查询、不发送，独立客户端也遵守运行时间窗口。
+- **实际实现的功能与改动**：
+  - 查询客户端与监测共用时间窗口判定，在余额、发送及手动 Telegram 检查发起请求前再次检查时间。
+  - 执行期间进入夜间时停止新请求，不将其记录为余额查询故障。
+  - 5 项检查、真实本人余额查询及 Python 编译通过；仍返回 10.17 元。
+- **涉及文件**：
+  - client.py、monitor.py、tests/test_monitor.py、tools/check_telegram.py
 - **Git 提交**：待提交。
 
 ---

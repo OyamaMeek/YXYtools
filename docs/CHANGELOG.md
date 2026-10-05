@@ -154,3 +154,21 @@
 - **Git 提交**：`5ef3250 docs: record UTC scheduling evidence and remove temporary probe` 已普通推送至 origin/main，git ls-remote 核对远端与本地一致；实际哈希由后续文档提交补记。18:04:27 的 API 复核仅剩正式工作流 active，定时事件仍为 0，状态观察未推进。
 
 ---
+
+## [2026-10-05 10:27] 迁移 Telegram 群组接收目标并恢复余额查询
+
+- **需求/问题描述**：
+  > 用户更换 Telegram 对话后，自动监测因 ValueError 终止，要求修复。
+- **实际实现的功能与改动**：
+  - 真实状态校验重现接收目标身份不符；用户授权后迁移 state identity，余额基准、观察时间、故障状态及历史发送记录全部保留，迁移时 pending 为空。
+  - 同步本地 .env 与 TELEGRAM_CHAT_ID Secret；没有修改 Bot Token、登录配置或业务代码，保留严格身份校验。
+  - 5 项 unittest 和 git diff --check 通过；本人只读余额查询成功。
+  - 用户确认的群组目标正式手动运行 [37255430805](https://github.com/OyamaMeek/YXYtools/actions/runs/37255430805) 全部成功，远端观察时间推进至 10:26:59；余额未变，pending 为 0，sent 未增加，没有新增通知。
+  - 群组 getChat 返回 200，ID 匹配；getChatMember 确认 @YXYtools_bot 为 administrator。没有额外发送测试消息，真实余额变化的群组接收尚未发生。
+  - 已确认两次 schedule 事件；尚无迁移后的定时成功证据，不将本次手动运行表述为定时稳定性验收。
+- **涉及文件**：
+  - state 分支的 state.json；忽略的本地 .env；Actions TELEGRAM_CHAT_ID Secret
+  - memory/plan.md、memory/progress.md、memory/verify.md、memory/gotchas.md、docs/CHANGELOG.md
+- **Git 提交**：最终群组 state 迁移 `d8eb546 chore: persist monitor state` 已普通推送，原目标恢复点为 02a74d5；交付记录待提交。
+
+---

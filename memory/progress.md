@@ -1,5 +1,19 @@
 # 当前进度
 
+## 当前任务：Telegram 接收目标迁移
+
+- [x] 确认用户更换 Telegram 对话并授权修复；远端 pending 为空，原余额基准与发送记录有效。
+- [x] 核对本地旧配置身份与远端 state 一致；TELEGRAM_CHAT_ID Secret 于昨天 19:11 更新。
+- [x] 用户提供新 Chat ID；真实状态校验重现“状态版本、账户或接收目标不符”。
+- [x] state 提交 d8eb546 已普通推送，仅迁移为用户确认的群组目标 identity；原基准、观察时间、failure、pending 和 sent 全部保留。原目标恢复点为 02a74d5。
+- [x] 本地 .env 与 TELEGRAM_CHAT_ID Secret 已同步；Bot Token 与登录配置未改动。
+- [x] 5 项 unittest 通过；本地真实查询成功，余额仍为 110.17 元。
+- [x] 群组 getChat 返回 200，ID 匹配，类型为 supergroup；getChatMember 确认机器人为 administrator，无需额外启动。
+- [x] 最终群组目标运行 37255430805 全部成功，远端观察推进至 2026-10-05 10:26:59，余额 110.17 元，pending 为 0，sent 仍为 2。
+- [ ] 记录结果、原子提交并普通推送。
+
+## 已有交付记录
+
 - 已确认个人只读用途；目标学校：杭州电子科技大学信息工程学院。
 - 已分析版本 7.8.5 arm64 主程序，cryptid=0；定位校园卡路径及 sign 请求头。
 - 已关联抓包会话 546，成功解码 Brotli，确认实际 getMultiCardMoney 接口及一张卡。

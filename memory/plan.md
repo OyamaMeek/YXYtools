@@ -15,3 +15,12 @@
 - YAML、完整 31 个时点及现有 5 项测试已通过；用 GitHub API event=schedule 判断触发结果，不能用手动执行替代。
 - 普通 UTC 无业务请求诊断及正式监测在观察截止时均无定时事件；诊断已清理，证据见 memory/progress.md。保留等价 UTC 配置，自动执行尚未恢复，GitHub 内部未创建事件的原因仍不可观测。
 - 用户明确选择继续使用 GitHub 原生 schedule；调度来源固定为 GitHub，后续验收仍以 monitor.yml 的定时事件及实际查询结果为准。
+
+## 2026-10-05 Telegram 接收目标迁移
+
+1. 用户确认更换了 Telegram 对话并授权修复；获取新 Chat ID，核对本人登录配置与现有 state 身份一致。
+2. 对新目标执行 Telegram getChat 只读检查；重现更换 Chat ID 后身份校验拒绝的行为。
+3. 保留 state 提交作为恢复点，仅迁移 identity，保留余额基准、故障状态和发送记录；当前 pending 为空。
+4. 仅更新 TELEGRAM_CHAT_ID Secret，不修改登录配置及 Bot Token；保留严格身份校验。
+5. 运行已有测试，手动触发正式工作流，核对成功查询、状态推进和待发队列；手动验收不能替代定时稳定性证据。
+6. 保存脱敏迁移记录、开发日志并提交推送。

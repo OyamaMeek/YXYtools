@@ -1,5 +1,23 @@
 # 验证要求
 
+## Telegram 迁移验收
+
+- 旧 Chat ID 对应的本地身份须与远端 state 一致；更换 Chat ID 应重现身份拒绝。
+- Telegram getChat 验证新对话可访问，不额外发送测试消息。
+- 迁移只改变 identity；余额、观察时间、failure、pending 和 sent 保持一致，使用普通 push 保留历史与并发保护。
+- 现有 unittest 全部通过；正式 Actions 手动运行成功且观察时间推进。
+- 不在日志或提交中保存 Chat ID、Bot Token、账户标识或登录凭证；保持夜间限制与无变化不通知规则。
+
+### 2026-10-05 实际结果
+
+- 新 Chat ID 重现身份校验拒绝；迁移后身份校验通过，仅 identity 改变，其余状态字段逐项核对一致。
+- 5 项 unittest 通过；本人只读查询返回 110.17 元。
+- 群组目标正式手动运行 [37255430805](https://github.com/OyamaMeek/YXYtools/actions/runs/37255430805) 全部成功；远端观察推进至 10:26:59，pending 为 0，sent 未增加。
+- 用户确认的群组 getChat 返回 200，ID 匹配；getChatMember 确认机器人为 administrator。未发送额外测试消息，真实余额变化的群组接收仍待自然变化验证。
+- 已确认昨天 23:12 和今天 10:09 的 schedule 事件；前者夜间跳过，后者迁移前身份校验失败。尚无迁移后的定时成功证据。
+
+## 已有验收记录
+
 - 真实请求及响应核对学校、本人卡片和金额单位；拒绝鉴权失败与错误字段。
 - 已完成同期 App 余额核对、原始请求实时重放、完整登录签名匹配和多次新 nt 签名实时查询。会话长期有效期和自动续期未验证。
 - `tools/verify_client.py` 真实证据与真实网络检查已通过；`client.py --config work/client-private.json` 返回 10.17。

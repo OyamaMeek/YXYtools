@@ -169,6 +169,6 @@
 - **涉及文件**：
   - state 分支的 state.json；忽略的本地 .env；Actions TELEGRAM_CHAT_ID Secret
   - memory/plan.md、memory/progress.md、memory/verify.md、memory/gotchas.md、docs/CHANGELOG.md
-- **Git 提交**：最终群组 state 迁移 `d8eb546 chore: persist monitor state` 已普通推送，原目标恢复点为 02a74d5；交付记录待提交。
+- **Git 提交**：最终群组 state 迁移 `d8eb546 chore: persist monitor state` 已普通推送，原目标恢复点为 02a74d5；交付记录 `77888cc docs: record Telegram group migration and monitoring recovery` 已普通推送至 origin/main，远端哈希核对一致。本条实际哈希由后续文档提交补记。
 
 ---

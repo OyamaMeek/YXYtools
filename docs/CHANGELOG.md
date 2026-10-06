@@ -185,6 +185,6 @@
 - **涉及文件**：
   - .github/workflows/monitor.yml、README.md
   - memory/plan.md、memory/progress.md、memory/verify.md、docs/CHANGELOG.md
-- **Git 提交**：待提交。
+- **Git 提交**：`0f38b70 fix: offset monitor schedule to minutes 06 and 36` 已普通推送至 origin/main，git ls-remote 核对远端哈希与本地一致；本条实际哈希由后续文档提交保存。
 
 ---

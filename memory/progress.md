@@ -5,7 +5,8 @@
 - [x] 用户授权调整分钟，保留半小时间隔、GitHub 调度及北京时间查询窗口。
 - [x] 新计划检查先因原 cron 失败；工作流已改为 UTC `36 23 * * *`、`6,36 0-14 * * *`，README 已同步。
 - [x] YAML 解析及同一计划检查通过；完整 31 个时点换算为北京时间 07:36 至 22:36，间隔均为 30 分钟且在允许窗口内；现有 5 项 unittest 及 git diff --check 通过。
-- [ ] 开发记录已保存，待提交并普通推送 origin/main；实际调度改善待新配置的 schedule 事件验证。
+- [x] 定时调整 `0f38b70 fix: offset monitor schedule to minutes 06 and 36` 已普通推送 origin/main，远端哈希与本地一致；开发记录已保存。本条提交事实由后续文档提交保存。
+- 实际调度改善待新配置的 schedule 事件验证。
 
 ## 已完成：Telegram 接收目标迁移
 

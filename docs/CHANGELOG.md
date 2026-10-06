@@ -172,3 +172,19 @@
 - **Git 提交**：最终群组 state 迁移 `d8eb546 chore: persist monitor state` 已普通推送，原目标恢复点为 02a74d5；交付记录 `77888cc docs: record Telegram group migration and monitoring recovery` 已普通推送至 origin/main，远端哈希核对一致。本条实际哈希由后续文档提交补记。
 
 ---
+
+## [2026-10-06 12:17] 调整半小时监测至每小时 06、36 分
+
+- **需求/问题描述**：
+  > 用户要求在 06 分执行，以错开 GitHub 整点调度。
+- **实际实现的功能与改动**：
+  - UTC cron 调整为 `36 23 * * *`、`6,36 0-14 * * *`，对应北京时间 07:36 至 22:36，每半小时一次，共 31 次；保留 [07:30, 23:00) 查询与通知窗口。
+  - README、计划、进度与验收记录已同步；没有修改业务代码、Secrets 或 state，也没有手动触发业务请求。
+  - 新计划断言先因原 cron 失败，调整后 YAML 解析及同一断言通过；完整时点换算、30 分钟间隔、窗口边界、现有 5 项 unittest 和 git diff --check 均通过。
+  - 实际调度改善仍待新配置的 schedule 事件验证，错开分钟不能保证准时执行。
+- **涉及文件**：
+  - .github/workflows/monitor.yml、README.md
+  - memory/plan.md、memory/progress.md、memory/verify.md、docs/CHANGELOG.md
+- **Git 提交**：待提交。
+
+---

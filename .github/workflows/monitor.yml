@@ -2,8 +2,8 @@ name: Campus card balance monitor
 
 "on":
   schedule:
-    - cron: '30 23 * * *'
-    - cron: '0,30 0-14 * * *'
+    - cron: '36 23 * * *'
+    - cron: '6,36 0-14 * * *'
   workflow_dispatch:
     inputs:
       retry_blocked:

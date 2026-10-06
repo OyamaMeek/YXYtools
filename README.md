@@ -33,7 +33,7 @@ python3 monitor.py --config work/client-private.json --state-dir work/state-curr
 
 不要同时手动运行本地监测与 Actions。状态读取失败、账户或接收目标变更、分支不同、未保存改动、远端不同步时明确失败，不当作首次初始化。Git 推送失败后重新检出最新 state 到新的忽略目录，继续处理远端保存的待发消息；不要用旧 checkout 覆盖远端。
 
-工作流 `Campus card balance monitor` 使用 Python 3.12，只有标准库运行依赖。定时计划为北京时间 07:30、08:00 至 22:30 每半小时，共 31 次，使用 UTC cron `30 23 * * *` 和 `0,30 0-14 * * *` 表达。所有手动和定时执行共用 concurrency 组，不取消执行中的任务。GitHub 可能延迟或丢弃定时事件；启动及每次业务请求前均检查实际时间，夜间跳过。自动触发须通过 Actions 中的 `schedule` 事件验证，手动运行成功只能验证手动流程。[GitHub 定时规则](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule)
+工作流 `Campus card balance monitor` 使用 Python 3.12，只有标准库运行依赖。定时计划为北京时间 07:36、08:06 至 22:36 每半小时，共 31 次，使用 UTC cron `36 23 * * *` 和 `6,36 0-14 * * *` 表达。所有手动和定时执行共用 concurrency 组，不取消执行中的任务。GitHub 可能延迟或丢弃定时事件；启动及每次业务请求前均检查实际时间，夜间跳过。自动触发须通过 Actions 中的 `schedule` 事件验证，手动运行成功只能验证手动流程。[GitHub 定时规则](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule)
 
 Actions 使用 Secrets `YXY_LOGIN_CONFIG`（本地登录配置的完整 JSON）、`TELEGRAM_BOT_TOKEN` 和 `TELEGRAM_CHAT_ID`；这些值已加密上传，不进入仓库文件或日志。公开仓库的 state 分支按已确认的可见性保存余额、观察时间、待发消息和确认标识；不保存 token、uuToken、账户或接收 Chat ID。
 

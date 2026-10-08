@@ -27,7 +27,8 @@ def in_window(moment):
     if moment.tzinfo is None or moment.utcoffset() is None:
         raise ValueError('运行时间必须包含时区')
     local = moment.astimezone(BEIJING)
-    return 450 <= local.hour * 60 + local.minute < 1380
+    minute = local.hour * 60 + local.minute
+    return minute >= 450 or minute < 60
 
 
 def load_config(path):
@@ -88,30 +89,82 @@ def parse_balance(response, wallet_no):
     return amount
 
 
-def query_balance(config):
+def parse_transactions(response):
+    if not isinstance(response, dict) or response.get('success') is not True or type(response.get('statusCode')) is not int or response['statusCode'] != 0:
+        raise ValueError('交易明细业务查询失败；请检查会话凭证')
+    rows, total = response.get('rows'), response.get('total')
+    if not isinstance(rows, list) or type(total) is not int or total != len(rows):
+        raise ValueError('交易明细缺失或条数不完整')
+    result = []
+    ids = set()
+    for row in rows:
+        if not isinstance(row, dict):
+            raise ValueError('交易明细结构非法')
+        for key, limit in [('address',200), ('feeName',100), ('serialno',100)]:
+            value = row.get(key)
+            if not isinstance(value, str) or not value.strip() or len(value) > limit or any(ord(char) < 32 for char in value):
+                raise ValueError('交易明细名称或标识非法')
+        money = row.get('money')
+        if not isinstance(money, str) or len(money) > 20 or not re.fullmatch(r'-?[0-9]+(?:\.[0-9]{1,2})?', money):
+            raise ValueError('交易明细金额非法')
+        times = {}
+        for field, key in [('dealtime','transaction_at'), ('time','posted_at')]:
+            value = row.get(field)
+            if not isinstance(value, str) or not re.fullmatch(r'[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}', value):
+                raise ValueError('交易明细时间非法')
+            times[key] = datetime.strptime(value, '%Y-%m-%d %H:%M:%S').replace(tzinfo=BEIJING)
+        if row['serialno'] in ids:
+            raise ValueError('交易流水号重复')
+        ids.add(row['serialno'])
+        result.append({'id':row['serialno'], 'project':row['address'], 'kind':row['feeName'], 'amount':Decimal(money), **times})
+    return result
+
+
+def card_request(config, path, parameters=None):
     form = {'appVersion':'740', 'deviceId':config['device_id'], 'nt':str(time.time_ns() // 1_000_000), 'platform':'YUNMA_APP', 'token':config['token'], 'ymId':config['ym_id']}
+    if parameters is not None:
+        form.update(parameters)
     headers = {'Content-Type':'application/x-www-form-urlencoded; charset=utf-8', 'Accept-Encoding':'identity', 'sign':sign_form(form, config['session_secret'])}
     connection = http.client.HTTPSConnection('compus.xiaofubao.com', timeout=20)
     try:
         if not in_window(now()):
             raise OutsideWindowError('当前时间不允许查询')
-        connection.request('POST', '/routeauth/auth/route/auth/user/getMultiCardMoney', urlencode(form), headers)
+        connection.request('POST', path, urlencode(form), headers)
         response = connection.getresponse()
         payload = response.read(1_048_577)
         if response.status != 200:
-            raise ValueError(f'余额 HTTP 查询失败：{response.status}')
+            raise ValueError(f'校园卡 HTTP 查询失败：{response.status}')
         if len(payload) > 1_048_576:
-            raise ValueError('余额响应超过大小限制')
+            raise ValueError('校园卡响应超过大小限制')
         encoding = response.getheader('Content-Encoding')
         if encoding == 'gzip':
             payload = gzip.decompress(payload)
         elif encoding not in (None, 'identity'):
             raise ValueError('服务端未遵守响应压缩协商')
         if len(payload) > 1_048_576:
-            raise ValueError('解压后的余额响应超过大小限制')
-        return parse_balance(json.loads(payload), config['wallet_no'])
+            raise ValueError('解压后的校园卡响应超过大小限制')
+        return json.loads(payload)
     finally:
         connection.close()
+
+
+def query_balance(config):
+    return parse_balance(card_request(config, '/routeauth/auth/route/auth/user/getMultiCardMoney'), config['wallet_no'])
+
+
+def query_transactions(config, start, end):
+    if start.tzinfo is None or start.utcoffset() is None or end.tzinfo is None or end.utcoffset() is None or end < start:
+        raise ValueError('交易查询间隔非法')
+    day, last_day = start.astimezone(BEIJING).date(), end.astimezone(BEIJING).date()
+    rows = {}
+    while day <= last_day:
+        response = card_request(config, '/routeauth/auth/route/user/cardQuerynoPage', {'queryTime':day.strftime('%Y%m%d')})
+        for row in parse_transactions(response):
+            if row['id'] in rows and row != rows[row['id']]:
+                raise ValueError('跨日交易流水内容不一致')
+            rows[row['id']] = row
+        day += timedelta(days=1)
+    return sorted(rows.values(), key=lambda row:row['posted_at'])
 
 
 if __name__ == '__main__':

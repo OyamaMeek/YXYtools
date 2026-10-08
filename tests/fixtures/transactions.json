@@ -1,0 +1,10 @@
+{
+  "statusCode": 0,
+  "success": true,
+  "total": 3,
+  "rows": [
+    {"type": "1", "time": "2026-10-08 22:31:48", "dealtime": "2026-10-08 22:31:13", "address": "寝室热水", "feeName": "消费", "serialno": "redacted-1", "money": "-2.85", "monDiscount": "0.00", "feeNum": "100", "concessionsMon": "0.00"},
+    {"type": "4", "time": "2026-10-08 22:23:48", "dealtime": "2026-10-08 22:22:40", "address": "寝室热水1-2", "feeName": "补助圈存", "serialno": "redacted-2", "money": "0.00", "monDiscount": "0.00", "feeNum": "26", "concessionsMon": "0.00"},
+    {"type": "1", "time": "2026-10-08 13:04:30", "dealtime": "2026-10-08 13:05:02", "address": "西区餐厅", "feeName": "消费", "serialno": "redacted-3", "money": "-13.59", "monDiscount": "0.00", "feeNum": "100", "concessionsMon": "0.00"}
+  ]
+}

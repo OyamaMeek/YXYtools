@@ -32,7 +32,7 @@ class MonitorTests(unittest.TestCase):
             self.assertEqual(existing.read_text(), 'existing private configuration')
 
     def test_time_window_excludes_night_and_rejects_naive_time(self):
-        for hour, minute, expected in [(7,29,False),(7,30,True),(22,59,True),(23,0,False)]:
+        for hour, minute, expected in [(7,29,False),(7,30,True),(22,59,True),(23,0,True),(0,59,True),(1,0,False)]:
             self.assertEqual(monitor.in_window(datetime(2026,10,4,hour,minute,tzinfo=ZONE)), expected)
             self.assertEqual(client.in_window(datetime(2026,10,4,hour,minute,tzinfo=ZONE)), expected)
         with self.assertRaises(ValueError):

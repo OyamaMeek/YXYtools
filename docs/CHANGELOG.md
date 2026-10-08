@@ -203,3 +203,21 @@
 - **Git 提交**：`b4c21be docs: record empty campus card response investigation` 已普通推送 origin/main，远端哈希核对一致；实际提交哈希由后续文档提交补记。
 
 ---
+
+## [2026-10-08 23:40] 显示具体扣费项目并延长监测至次日 01:00
+
+- **需求/问题描述**：
+  > 根据 yxy_app/2026_10_08__22_44_46 抓包增加具体扣费项目显示，并将截止时间延后两小时。
+- **实际实现的功能与改动**：
+  - 复用签名和 HTTP 请求读取 cardQuerynoPage；余额变化通知显示项目、金额、交易时间及到账时间，跨日逐日查询，长消息按完整记录拆分。
+  - 严格校验明细条数、字段、金额和时间；明细失败保留有效基准，已有 state 格式和待发消息兼容，余额不变仍不生成新通知。
+  - 客户端和 Actions 查询/发送窗口延长为北京时间 [07:30, 次日 01:00)，计划执行从 07:36 至次日 00:36，共 35 次。
+  - 新行为与窗口测试先失败，最终 11 项 unittest、Python 编译、YAML 解析、35 个时点、全天 1440 分钟窗口一致性及 git diff --check 通过；原始抓包签名和脱敏样本逐字段核对通过。
+  - 23:38 新发起的真实本人只读请求成功，余额 120.98 元、明细四条，与截图的项目及金额一致。本次未修改凭证、远端 state 或发送测试通知；Telegram 现场接收及扩展时段实际 schedule 运行尚未验证。
+- **涉及文件**：
+  - client.py、monitor.py、.github/workflows/monitor.yml
+  - tests/test_monitor.py、tests/test_transactions.py、tests/fixtures/transactions.json
+  - README.md、Claude/Claude.md、memory/agents.md、memory/plan.md、memory/progress.md、memory/verify.md、memory/gotchas.md、docs/CHANGELOG.md
+- **Git 提交**：待提交。
+
+---

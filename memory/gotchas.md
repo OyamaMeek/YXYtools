@@ -17,3 +17,4 @@
 - Telegram getMe 只验证机器人；迁移目标须用 getChat 与 getChatMember 检查。chat not found 时先核对用户提供的 Chat ID，再判断是否需要启动机器人或添加群组成员；不能据工作流成功宣称通知已经送达。
 - 群组 Chat ID 的负号必须保留；根据用户最新确认值迁移，不在公开文档中保存具体 ID。
 - work/github-deps 的 cffi 扩展用于 Python 3.12；Secret 加密使用 bundled Python 3.12，避免系统 Python 3.9 导入失败。
+- 截止时间跨午夜时，客户端和 Actions 入口都按跨日窗口判断，并验证次日 00:59 允许、01:00 禁止；交易查询按观察区间涉及的北京时间日期逐日读取。

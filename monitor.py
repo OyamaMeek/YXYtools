@@ -13,7 +13,7 @@ from datetime import datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
 
-from client import OutsideWindowError, in_window, load_config, now, query_balance
+from client import OutsideWindowError, in_window, load_config, now, query_balance, query_transactions
 
 
 def telegram_config(env_file=None):
@@ -142,14 +142,26 @@ def queue_message(state, text):
     state['pending'].append({'id':uuid.uuid4().hex, 'text':text, 'attempts':0, 'retry_at':None, 'blocked':None})
 
 
-def record_balance(state, amount, moment):
+def record_balance(state, amount, moment, transactions=None):
     if not isinstance(amount, Decimal) or not amount.is_finite() or amount < 0 or amount * 100 != (amount * 100).to_integral_value():
         raise ValueError('观察余额非法')
     timestamp(moment.isoformat())
     previous = state['baseline']
     if previous is not None and Decimal(previous['yuan']) != amount:
         difference = amount - Decimal(previous['yuan'])
-        queue_message(state, f"校园卡余额变化\n余额：{amount:.2f} 元\n变动：{difference:+.2f} 元\n上次余额：{previous['yuan']} 元\n观察间隔：{previous['observed_at']} 至 {moment.isoformat()}\n检测时间为查询时间，不代表交易时间。")
+        text = f"校园卡余额变化\n余额：{amount:.2f} 元\n变动：{difference:+.2f} 元\n上次余额：{previous['yuan']} 元\n观察间隔：{previous['observed_at']} 至 {moment.isoformat()}\n检测时间为查询时间，不代表交易时间。"
+        if transactions is not None:
+            rows = [row for row in transactions if timestamp(previous['observed_at']) < row['posted_at'] <= moment]
+            text += '\n交易明细（按到账时间筛选；延迟到账可能与净变动不一致）：'
+            if not rows:
+                text += '\n暂无已到账交易明细'
+            for row in rows:
+                detail = f"\n{row['project']}（{row['kind']}）：{row['amount']:+.2f} 元\n交易：{row['transaction_at']:%Y-%m-%d %H:%M:%S}\n到账：{row['posted_at']:%Y-%m-%d %H:%M:%S}"
+                if len((text+detail).encode('utf-16-le')) // 2 > 4096:
+                    queue_message(state, text)
+                    text = '校园卡交易明细（续）'
+                text += detail
+        queue_message(state, text)
     state['baseline'] = {'yuan':format(amount,'.2f'), 'observed_at':moment.isoformat()}
     state['failure'] = None
 
@@ -256,14 +268,20 @@ def run(config_path, repo, env_file=None, retry_blocked=False):
     failed = False
     try:
         amount = query_balance(config)
+        moment = now()
+        previous = state['baseline']
+        transactions = None
+        # ponytail: 仅随净余额变化查询明细；补发延迟到账记录需要独立交易游标。
+        if previous is not None and Decimal(previous['yuan']) != amount:
+            transactions = query_transactions(config, timestamp(previous['observed_at']), moment)
     except OutsideWindowError:
         return 0
     except (ValueError, OSError, http.client.HTTPException):
         record_failure(state, 'query', now())
-        print('余额查询失败；有效基准保留')
+        print('余额或交易明细查询失败；有效基准保留')
         failed = True
     else:
-        record_balance(state, amount, now())
+        record_balance(state, amount, moment, transactions)
         print('余额查询成功，观察结果已生成')
     save_state(repo, state)
     drain_pending(repo, state, token, chat, retry_blocked)

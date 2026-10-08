@@ -3,7 +3,7 @@ name: Campus card balance monitor
 "on":
   schedule:
     - cron: '36 23 * * *'
-    - cron: '6,36 0-14 * * *'
+    - cron: '6,36 0-16 * * *'
   workflow_dispatch:
     inputs:
       retry_blocked:
@@ -25,7 +25,7 @@ jobs:
     steps:
       - name: Check Beijing time window
         id: window
-        run: python3 -c 'from datetime import datetime,timezone,timedelta; t=datetime.now(timezone(timedelta(hours=8))); print("allowed="+str(450<=t.hour*60+t.minute<1380).lower())' >> "$GITHUB_OUTPUT"
+        run: python3 -c 'from datetime import datetime,timezone,timedelta; t=datetime.now(timezone(timedelta(hours=8))); m=t.hour*60+t.minute; print("allowed="+str(m>=450 or m<60).lower())' >> "$GITHUB_OUTPUT"
 
       - name: Checkout monitor source
         if: steps.window.outputs.allowed == 'true'
@@ -39,7 +39,7 @@ jobs:
             /monitor.py
             /tools/run_monitor.py
             /tools/check_telegram.py
-            /tests/test_monitor.py
+            /tests/
 
       - name: Set up Python
         if: steps.window.outputs.allowed == 'true'

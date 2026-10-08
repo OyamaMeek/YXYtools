@@ -2,16 +2,19 @@
   "version": 1,
   "identity": "4065f904d6a99c5404a77ebd4f0cc089c3845764f99bd2d6457265fba30e1534",
   "baseline": {
-    "yuan": "137.67",
-    "observed_at": "2026-10-08T10:51:51.036307+08:00"
+    "yuan": "124.08",
+    "observed_at": "2026-10-08T21:20:12.571394+08:00"
   },
-  "failure": {
-    "kind": "query",
-    "count": 2,
-    "since": "2026-10-08T13:54:37.868756+08:00",
-    "alerted": false
-  },
-  "pending": [],
+  "failure": null,
+  "pending": [
+    {
+      "id": "ae1dc46140a844beae45f55539e0f71a",
+      "text": "校园卡余额变化\n余额：124.08 元\n变动：-13.59 元\n上次余额：137.67 元\n观察间隔：2026-10-08T10:51:51.036307+08:00 至 2026-10-08T21:20:12.571394+08:00\n检测时间为查询时间，不代表交易时间。",
+      "attempts": 0,
+      "retry_at": null,
+      "blocked": null
+    }
+  ],
   "sent": [
     {
       "id": "d42cd9fea8304262ab7c851b1dd0912a",

@@ -218,6 +218,6 @@
   - client.py、monitor.py、.github/workflows/monitor.yml
   - tests/test_monitor.py、tests/test_transactions.py、tests/fixtures/transactions.json
   - README.md、Claude/Claude.md、memory/agents.md、memory/plan.md、memory/progress.md、memory/verify.md、memory/gotchas.md、docs/CHANGELOG.md
-- **Git 提交**：待提交。
+- **Git 提交**：`18201a7 feat: show transaction details and extend monitoring to 01:00` 已普通推送 origin/main；本条实际哈希通过后续文档提交保存。
 
 ---

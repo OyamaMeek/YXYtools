@@ -221,3 +221,19 @@
 - **Git 提交**：`18201a7 feat: show transaction details and extend monitoring to 01:00` 已普通推送 origin/main；本条实际哈希通过后续文档提交保存。
 
 ---
+
+## [2026-10-08 23:50] 验证扣费明细正式通知
+
+- **需求/问题描述**：
+  > 用户要求测试扣费项目显示，并提供实际通知全文。
+- **实际实现的功能与改动**：
+  - 完整 11 项 unittest、Python 编译、35 个计划时点、全天 1440 分钟窗口判定和 git diff --check 再次通过；真实余额为 120.98 元，明细四条。
+  - [正式工作流 37803865949](https://github.com/OyamaMeek/YXYtools/actions/runs/37803865949) 使用 be864a5，全部步骤成功；23:49 在扩展窗口内查询、保存状态并通知，基准从 124.08 更新至 120.98 元。
+  - Telegram 新增一条发送确认 message_id=10，待发为 0，故障状态清除；用户提供通知全文与真实余额和明细重建文本逐字一致，热水两笔合计扣费 3.10 元，0.00 元补助圈存不影响差额。
+  - 本次没有修改业务代码或凭证，不制造消费或充值，不强制发送额外测试文本；手动运行不替代扩展时段实际 schedule 事件验收。
+- **涉及文件**：
+  - Claude/Claude.md、memory/progress.md、memory/verify.md、docs/CHANGELOG.md
+  - 忽略目录 work/ 中的私有运行状态、接口结果和通知核验记录
+- **Git 提交**：待提交。
+
+---

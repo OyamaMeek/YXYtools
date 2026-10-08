@@ -56,10 +56,10 @@ PYTHONPYCACHEPREFIX=work/__pycache__ python3 -m py_compile client.py monitor.py 
 - [首次 GitHub 实际运行](https://github.com/OyamaMeek/YXYtools/actions/runs/37179080148)：查询、状态、Telegram 网络检查通过。
 - [第二次 GitHub 实际运行](https://github.com/OyamaMeek/YXYtools/actions/runs/37179174868)：再次查询成功，远端观察时间推进，余额不变且没有新消息。
 - [最终代码 GitHub 实际运行](https://github.com/OyamaMeek/YXYtools/actions/runs/37179863052)：cd0fea1 的请求时间限制、真实查询、状态恢复和 Telegram 网络检查通过；余额相同，没有新通知。
-- 真实余额变化后的通知尚未有现场接收证据；金额变化及文本已通过本地行为检查。没有发起充值或消费来制造变化。
+- [明细通知实际测试](https://github.com/OyamaMeek/YXYtools/actions/runs/37803865949)：2026-10-08 23:49 手动正式运行全部成功，净减少 3.10 元，新增一次发送确认且待发为空；用户提供的通知全文与真实余额和明细重建文本逐字一致。没有发起充值或消费来制造变化。
 - token 有效期和自动续期未验证；失效后本人正常重新登录，更新 token 与完整登录响应 uuToken，并重新保存 Secrets。
 - 时间边界已覆盖 07:29、07:30、22:59、23:00、00:59、01:00；尚未完成整夜运行观察、每类网络故障或真实登录失效恢复的现场验证。
-- 2026-10-08 23:38 真实余额查询成功，余额 120.98 元；明细接口返回四条记录，与用户截图中的项目和金额一致。具体项目的 Telegram 现场接收与扩展时段的 schedule 运行尚未验证。
+- 2026-10-08 23:38 真实余额查询成功，余额 120.98 元；明细接口返回四条记录，与用户截图中的项目和金额一致。23:49 已通过正式通知流程验证；扩展时段的 schedule 运行尚未验证。
 
 ## 官方参考
 

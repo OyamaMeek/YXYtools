@@ -234,6 +234,6 @@
 - **涉及文件**：
   - Claude/Claude.md、memory/progress.md、memory/verify.md、docs/CHANGELOG.md
   - 忽略目录 work/ 中的私有运行状态、接口结果和通知核验记录
-- **Git 提交**：待提交。
+- **Git 提交**：`f5cc3cb docs: verify real transaction notification delivery` 已普通推送 origin/main；本条实际哈希通过后续文档提交保存。
 
 ---

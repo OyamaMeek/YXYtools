@@ -5,7 +5,12 @@
     "yuan": "137.67",
     "observed_at": "2026-10-08T10:51:51.036307+08:00"
   },
-  "failure": null,
+  "failure": {
+    "kind": "query",
+    "count": 1,
+    "since": "2026-10-08T13:54:37.868756+08:00",
+    "alerted": false
+  },
   "pending": [],
   "sent": [
     {

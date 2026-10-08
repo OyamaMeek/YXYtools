@@ -7,7 +7,7 @@
   },
   "failure": {
     "kind": "query",
-    "count": 1,
+    "count": 2,
     "since": "2026-10-08T13:54:37.868756+08:00",
     "alerted": false
   },

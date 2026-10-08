@@ -200,6 +200,6 @@
   - 查询尚未恢复，需结合 App 卡片及余额查询结果继续判断原因。本次仅保存排查记录，未额外运行测试套件。
 - **涉及文件**：
   - memory/progress.md、memory/verify.md、docs/CHANGELOG.md
-- **Git 提交**：待提交。
+- **Git 提交**：`b4c21be docs: record empty campus card response investigation` 已普通推送 origin/main，远端哈希核对一致；实际提交哈希由后续文档提交补记。
 
 ---

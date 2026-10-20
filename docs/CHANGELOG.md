@@ -246,11 +246,12 @@
   - 增加可选 TELEGRAM_MESSAGE_THREAD_ID 配置；普通发送及重试均指定话题，检查回执话题，未配置时兼容原有群组通知。
   - 话题纳入目标身份和发送阻塞摘要；本地 .env 和 Actions Secret 已同步，仅迁移 state identity，保留余额、故障、待发及历史记录，迁移时 pending=0、sent=30。
   - 新增四项测试先因缺少配置及参数失败；最终 15 项 unittest、Python 编译和 git diff --check 通过，覆盖完整 run 的本地 HTTP/Git 路径、错误回执及夜间禁止发送。
-  - 工作流迁移期间暂停且无活动任务；代码推送后恢复并验证正式运行，尚无真实话题送达回执，没有强制发送测试文本。
+  - 工作流已恢复 active；[正式手动运行 39454783322](https://github.com/OyamaMeek/YXYtools/actions/runs/39454783322) 所有步骤成功，观察推进至 00:08:39，pending=0、failure=null。Ruby YAML 解析和话题参数检查通过；真实 getChat/getChatMember 及两条话题更新确认目标和机器人权限。
+  - 此次余额未变，sent 保持 30，没有强制发送测试文本；实际话题送达仍待自然余额变化验证，手动运行不替代新代码的 schedule 事件。
 - **涉及文件**：
   - monitor.py、tools/check_telegram.py、tests/test_telegram_topic.py、.github/workflows/monitor.yml、README.md
   - memory/agents.md、memory/plan.md、memory/progress.md、memory/verify.md、docs/CHANGELOG.md
   - 忽略的本地 .env、work/ 私有迁移记录；Actions 话题 Secret；state 分支 state.json
-- **Git 提交**：main 待提交；state 迁移 `20b2f1e chore: persist monitor state` 已普通推送，恢复点 `5e76bea`。
+- **Git 提交**：`5c787c5 feat: route Telegram notifications to configured topic` 已普通推送 origin/main 并核对远端；state 迁移 `20b2f1e chore: persist monitor state` 已普通推送，恢复点 `5e76bea`。本条提交事实通过后续验证文档提交保存。
 
 ---

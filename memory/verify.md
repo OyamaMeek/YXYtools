@@ -12,7 +12,9 @@
 - 新增四项测试先因缺少话题参数/配置失败；最终 15 项 unittest、Python 编译及 git diff --check 通过。
 - 本地 HTTP 接收与真实 Git 远端覆盖完整 run 的话题参数传递、待发恢复及回执保存；未指定话题兼容，缺失/错误话题回执被拒绝，夜间请求为零。
 - 本地 .env 权限保持 600；话题 Secret 已单独加密更新。state 迁移提交 20b2f1e 已推送，只改变 identity，其他字段逐项相等，pending=0、sent=30；恢复点为 5e76bea。
-- 正式工作流及真实话题送达尚待验证；没有发送测试消息。
+- 功能提交 5c787c5 已普通推送并核对远端；工作流已恢复 active，[正式运行 39454783322](https://github.com/OyamaMeek/YXYtools/actions/runs/39454783322) 全部步骤成功，含托管 Python 3.12 测试、真实查询及 getMe；观察推进至 2026-10-21 00:08:39，pending=0、failure=null。
+- Ruby YAML 解析及工作流话题参数检查通过。真实 getChat 确认论坛群组，getChatMember 确认机器人管理员权限，getUpdates 返回两条目标话题更新，未消费更新游标。
+- 余额未变，sent 仍为 30，没有发送测试消息；真实话题送达仍待自然余额变化后的成功回执验证。手动运行不替代新代码的 schedule 事件。
 
 ## 2026-10-08 扣费项目验收
 

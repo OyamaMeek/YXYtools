@@ -6,3 +6,4 @@
 - Actions Secrets 通过 GitHub REST 和现有 Git 凭证加密上传。仅部署时使用的 PyNaCl 安装于忽略的 work/，不改变系统或产品依赖。
 - 当前工作区为 YXYtools；抓包和凭证仅保存在忽略目录，报告脱敏。
 - 扣费项目任务采用 ponytail、brainstorming 的范围梳理和测试先行流程；单代理执行，沿用 Python 标准库和已有离线抓包工具。
+- 话题通知任务采用已获授权的小范围设计、Ponytail 最小改动、测试先行与完成前验证；单代理，复用现有 GitHub REST 工具及标准库。

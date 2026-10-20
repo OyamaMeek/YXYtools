@@ -35,7 +35,9 @@ python3 monitor.py --config work/client-private.json --state-dir work/state-curr
 
 工作流 `Campus card balance monitor` 使用 Python 3.12，只有标准库运行依赖。定时计划为北京时间 07:36、08:06 至次日 00:36 每半小时，共 35 次，使用 UTC cron `36 23 * * *` 和 `6,36 0-16 * * *` 表达。所有手动和定时执行共用 concurrency 组，不取消执行中的任务。GitHub 可能延迟或丢弃定时事件；启动及每次业务请求前均检查实际时间，01:00 至 07:30 跳过。自动触发须通过 Actions 中的 `schedule` 事件验证，手动运行成功只能验证手动流程。[GitHub 定时规则](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule)
 
-Actions 使用 Secrets `YXY_LOGIN_CONFIG`（本地登录配置的完整 JSON）、`TELEGRAM_BOT_TOKEN` 和 `TELEGRAM_CHAT_ID`；这些值已加密上传，不进入仓库文件或日志。公开仓库的 state 分支按已确认的可见性保存余额、观察时间、包含交易项目及时间的待发消息和确认标识；不保存 token、uuToken、账户、交易流水号或接收 Chat ID。
+Actions 使用 Secrets `YXY_LOGIN_CONFIG`（本地登录配置的完整 JSON）、`TELEGRAM_BOT_TOKEN`、`TELEGRAM_CHAT_ID` 和可选的 `TELEGRAM_MESSAGE_THREAD_ID`；这些值已加密上传，不进入仓库文件或日志。公开仓库的 state 分支按已确认的可见性保存余额、观察时间、包含交易项目及时间的待发消息和确认标识；不保存 token、uuToken、账户、交易流水号或接收 Chat ID。
+
+本地 `.env` 同样支持 `TELEGRAM_MESSAGE_THREAD_ID`，填写话题的正整数 ID；未设置或留空时发送至群组默认话题。当前通知目标为用户指定的“饭卡”话题。指定话题后，普通通知及重试均携带 `message_thread_id`，并核对 Telegram 回执中的话题 ID。更改话题需要迁移 state identity，保留已有余额和发送记录。
 
 在 [Actions 页面](https://github.com/OyamaMeek/YXYtools/actions) 选择工作流，再选择 Run workflow。默认不重试已阻塞的权限错误；修复接收权限后勾选 retry_blocked。修改 Bot Token 时更新同名 Secret，程序会允许新凭证重新尝试；更换接收目标属于状态身份变更，需单独迁移状态。手动执行还会调用 getMe 验证 Telegram 网络，不发送测试消息。
 

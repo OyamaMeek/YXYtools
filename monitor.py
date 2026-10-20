@@ -26,17 +26,22 @@ def telegram_config(env_file=None):
             if len(fields) != 1 or '=' not in fields[0]:
                 raise ValueError('.env 需使用单行 KEY=VALUE 格式')
             key, value = fields[0].split('=', 1)
-            if key not in {'TELEGRAM_BOT_TOKEN', 'TELEGRAM_CHAT_ID'} or key in values:
+            if key not in {'TELEGRAM_BOT_TOKEN', 'TELEGRAM_CHAT_ID', 'TELEGRAM_MESSAGE_THREAD_ID'} or key in values:
                 raise ValueError('.env 存在未知或重复的配置字段')
             values[key] = value
     token, chat = values.get('TELEGRAM_BOT_TOKEN', ''), values.get('TELEGRAM_CHAT_ID', '')
     if not re.fullmatch(r'[0-9]+:[A-Za-z0-9_-]+', token) or not re.fullmatch(r'-?[0-9]+', chat):
         raise ValueError('Telegram Token 或 Chat ID 格式非法')
-    return token, chat
+    thread = values.get('TELEGRAM_MESSAGE_THREAD_ID', '')
+    if thread and (not re.fullmatch(r'[0-9]{1,10}', thread) or not 1 <= int(thread) <= 2_147_483_647):
+        raise ValueError('Telegram 话题 ID 需为正整数')
+    return token, chat, int(thread) if thread else None
 
 
-def identity(config, chat):
+def identity(config, chat, thread_id=None):
     value = [config['ym_id'], config['device_id'], config['wallet_no'], chat]
+    if thread_id is not None:
+        value.append(thread_id)
     return hashlib.sha256(json.dumps(value).encode()).hexdigest()
 
 
@@ -192,12 +197,15 @@ class TelegramError(RuntimeError):
         self.retry_after = retry_after
 
 
-def send_message(token, chat, text):
+def send_message(token, chat, text, thread_id=None):
     if not in_window(now()):
         raise OutsideWindowError('当前时间不允许发送')
     connection = http.client.HTTPSConnection('api.telegram.org', timeout=20)
     try:
-        payload = json.dumps({'chat_id':chat, 'text':text}, ensure_ascii=False).encode()
+        message = {'chat_id':chat, 'text':text}
+        if thread_id is not None:
+            message['message_thread_id'] = thread_id
+        payload = json.dumps(message, ensure_ascii=False).encode()
         if not in_window(now()):
             raise OutsideWindowError('当前时间不允许发送')
         connection.request('POST','/bot'+token+'/sendMessage',payload,{'Content-Type':'application/json'})
@@ -218,13 +226,18 @@ def send_message(token, chat, text):
         result = value.get('result')
         if not isinstance(result, dict) or type(result.get('message_id')) is not int or result['message_id'] <= 0 or not isinstance(result.get('chat'), dict) or str(result['chat'].get('id')) != chat:
             raise TelegramError('invalid-result')
+        if thread_id is not None and (type(result.get('message_thread_id')) is not int or result['message_thread_id'] != thread_id):
+            raise TelegramError('invalid-topic')
         return result['message_id']
     finally:
         connection.close()
 
 
-def drain_pending(repo, state, token, chat, retry_blocked=False):
-    fingerprint = hashlib.sha256((token+'|'+chat).encode()).hexdigest()
+def drain_pending(repo, state, token, chat, retry_blocked=False, thread_id=None):
+    target = token+'|'+chat
+    if thread_id is not None:
+        target += '|'+str(thread_id)
+    fingerprint = hashlib.sha256(target.encode()).hexdigest()
     for attempt in range(3):
         if not state['pending'] or not in_window(now()):
             return
@@ -235,7 +248,7 @@ def drain_pending(repo, state, token, chat, retry_blocked=False):
         if item['retry_at'] is not None and timestamp(item['retry_at']) > now():
             return
         try:
-            message_id = send_message(token, chat, item['text'])
+            message_id = send_message(token, chat, item['text'], thread_id)
         except OutsideWindowError:
             return
         except (TelegramError, OSError, http.client.HTTPException) as error:
@@ -261,8 +274,8 @@ def run(config_path, repo, env_file=None, retry_blocked=False):
         print('当前为北京时间夜间，已跳过查询和发送')
         return 0
     config = load_config(config_path)
-    token, chat = telegram_config(env_file)
-    state = load_state(repo, identity(config, chat))
+    token, chat, thread_id = telegram_config(env_file)
+    state = load_state(repo, identity(config, chat, thread_id))
     if not in_window(now()):
         return 0
     failed = False
@@ -284,7 +297,7 @@ def run(config_path, repo, env_file=None, retry_blocked=False):
         record_balance(state, amount, moment, transactions)
         print('余额查询成功，观察结果已生成')
     save_state(repo, state)
-    drain_pending(repo, state, token, chat, retry_blocked)
+    drain_pending(repo, state, token, chat, retry_blocked, thread_id)
     if failed or state['pending']:
         return 1
     return 0

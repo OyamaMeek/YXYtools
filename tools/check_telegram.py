@@ -11,7 +11,7 @@ def main():
     if not in_window(now()):
         print('北京时间夜间，跳过 Telegram 连接检查')
         return
-    token, _ = telegram_config()
+    token, _, _ = telegram_config()
     connection = http.client.HTTPSConnection('api.telegram.org', timeout=20)
     try:
         if not in_window(now()):

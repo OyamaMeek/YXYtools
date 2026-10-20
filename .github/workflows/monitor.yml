@@ -68,6 +68,7 @@ jobs:
           YXY_LOGIN_CONFIG: ${{ secrets.YXY_LOGIN_CONFIG }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TELEGRAM_MESSAGE_THREAD_ID: ${{ secrets.TELEGRAM_MESSAGE_THREAD_ID }}
           MONITOR_STATE_DIR: ${{ github.workspace }}/monitor-state
           RETRY_BLOCKED: ${{ inputs.retry_blocked && 'true' || 'false' }}
         run: python3 tools/run_monitor.py
